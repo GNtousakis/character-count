@@ -8,19 +8,19 @@ using v8::String;
 using v8::Value;
 using v8::Handle;
 
-void CharacterCount(const FunctionCallbackInfo<Value>& args){
-  Isolate* isolate = args.GetIsolate();
+NAN_METHOD(CharacterCount) {
+  Isolate* isolate = info.GetIsolate();
   
   // Check the number of arguments passed.
-  if (args.Length() == 0 || !args[0]->IsString()) {
+  if (info.Length() == 0 || !info[0]->IsString()) {
     // Throw an Error that is passed back to JavaScript
     isolate->ThrowException(Exception::TypeError(
         String::NewFromUtf8(isolate, "You need to pass a string")));
     return;
   }
 
-  String::Utf8Value tmp(args[0]->ToString());
-  String::Utf8Value tmp2(args[1]->ToString());
+  String::Utf8Value tmp(info[0]->ToString());
+  String::Utf8Value tmp2(info[1]->ToString());
   int counter = 0;
   // Change string to c++ type
   std::string str = std::string(*tmp); 
@@ -32,11 +32,11 @@ void CharacterCount(const FunctionCallbackInfo<Value>& args){
     }
   }
 
-  args.GetReturnValue().Set(counter);
+  info.GetReturnValue().Set(counter);
 }
 
-void Init(Handle<Object> exports) {
-  NODE_SET_METHOD(exports, "CharacterCount", CharacterCount);
+NAN_MODULE_INIT(Init) {
+  NAN_EXPORT(target, CharacterCount);
 }
 
 NODE_MODULE(CharacterCount, Init)
